@@ -1,24 +1,37 @@
 import discord
-import random
 from discord.ext import commands
-
+import os
+from dotenv import load_dotenv
+load_dotenv()
+TOKEN = os.getenv("DISCORD_TOKEN")
 intents = discord.Intents.default()
 intents.message_content = True
-def gen_pass(length):
-    characters = "abcdefghijklmnopqrstuvwxyz0123456789_$#&@*+-¿¡?!"
-    password = ""
-    for i in range(length):
-        password += random.choice(characters)
-
-    return password
-bot = commands.Bot(command_prefix="!",intents=intents)
+bot=commands.Bot(command_prefix="!",intents=intents)
 @bot.event
-async def on_ready():
-    print(f"hemos iniciado sesión como {bot.user}")
+async def onready():
+    print(f"Connected as {bot.user}")
 @bot.command()
 async def hello(ctx):
-    await ctx.send("Hola")
+    await ctx.send("Hi! I'm your ecollogic bot :seedling:")
 @bot.command()
-async def password(ctx,lenght:int):
-    await ctx.send(gen_pass(lenght))
-bot.run("MTQxNjI0NDExMDkwNTU3MzQ2OA.GWTIbs.DeDqiBrRVQFn6QsOQjPwhQQPBCiaBT7TtSSL-M")
+async def recycle(ctx,objeto:str):
+    clasificacion = {
+        "botella": "♻️ Va al contenedor de PLÁSTICO.",
+        "papel": "📄 Va al contenedor de PAPEL.",
+        "cáscara": "🍌 Va al contenedor ORGÁNICO.",
+        "pilas": "⚠️ Las PILAS deben ir a un punto especial de reciclaje."
+    }
+    respuesta = clasificacion.get(objeto.lower(),"No se donde va ese objeto")
+    await ctx.send(respuesta)
+@bot.command()
+async def time(ctx, objeto:str):
+    degradacion = {
+        "botella": "🍼 Una botella de plástico tarda ¡450 años! en degradarse 😱",
+        "papel": "📄 El papel tarda unos 2 a 6 meses.",
+        "cáscara": "🍌 Una cáscara tarda solo unas semanas.",
+        "pilas": "⚠️ Las pilas pueden tardar ¡1000 años! y además contaminan el suelo."
+    }
+    respuesta = degradacion.get(objeto.lower(), "No sé cuanto puede durar en el ambiente")
+    await ctx.send(respuesta)
+
+bot.run(TOKEN)
